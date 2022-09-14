@@ -1,0 +1,13 @@
+replicaCount: 1
+architecture: standalone
+auth:
+  rootUser: root
+  rootPassword: g44bsljDAi5nbWjf
+
+persistence:
+  size: 75M
+
+livenessProbe:
+  enabled: false
+readinessProbe:
+  enabled: false

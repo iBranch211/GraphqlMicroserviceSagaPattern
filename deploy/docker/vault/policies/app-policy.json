@@ -1,0 +1,34 @@
+{
+  "path": {
+    "secret/auth-service*": {
+      "capabilities": [
+        "create", "read", "update", "delete", "list"
+      ]
+    },
+    "secret/order-service*": {
+      "capabilities": [
+        "create", "read", "update", "delete", "list"
+      ]
+    },
+    "secret/payment-service*": {
+      "capabilities": [
+        "create", "read", "update", "delete", "list"
+      ]
+    },
+    "secret/apollo-gateway*": {
+      "capabilities": [
+        "create", "read", "update", "delete", "list"
+      ]
+    },
+    "secret/application*": {
+      "capabilities": [
+        "create", "read", "update", "delete", "list"
+      ]
+    },
+    "database/creds*": {
+      "capabilities": [
+       "read"
+      ]
+    }
+  }
+}

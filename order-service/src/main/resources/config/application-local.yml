@@ -1,0 +1,37 @@
+server:
+  port: ${PORT:8081}
+
+spring:
+  cloud:
+    vault:
+      enabled: false
+    consul:
+      enabled: false
+    stream:
+      kafka:
+        binder:
+          brokers: localhost
+          defaultBrokerPort: 29092
+          auto-create-topics: true
+  graphql:
+    graphiql:
+      enabled: true
+  data:
+    mongodb:
+      uri: mongodb+srv://test_user123456:4hRsOKoJxkHswunQ@cluster0.nbzfi.mongodb.net/demo
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: false
+
+logging:
+  level:
+    ROOT: DEBUG
+    io.github.susimsek.product: DEBUG
+  use-json-format: false
+  logstash:
+    enabled: false
+    host: localhost
+    port: 5001
+    ring-buffer-size: 512

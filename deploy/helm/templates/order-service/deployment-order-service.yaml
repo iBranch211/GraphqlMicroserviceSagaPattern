@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  labels:
+    {{- include "order-service.labels" . | nindent 4 }}
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      {{- include "order-service.selectorLabels" . | nindent 6 }}
+      version: v1
+  {{- if .Values.global.updateStrategy }}
+  {{- if not .Values.orderService.autoscaling.enabled }}
+  replicas: {{ .Values.orderService.replicaCount }}
+  {{- end }}
+  strategy: {{- toYaml .Values.global.updateStrategy | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/order-service/config-order-service.yaml") . | sha256sum }}
+      labels:
+        {{- include "order-service.selectorLabels" . | nindent 8 }}
+        version: v1
+    spec:
+      serviceAccountName: {{ template "app.serviceAccountName" . }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - order-service
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+      {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets: {{- toYaml .Values.global.imagePullSecrets | nindent 4 }}
+      {{- end }}
+      containers:
+        {{- if .Values.orderService.extraSideContainers }}
+        {{ tpl .Values.orderService.extraSideContainers . | indent 8 }}
+        {{- end }}
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.orderService.image.repository }}:{{ .Values.orderService.image.tag }}"
+          imagePullPolicy: {{ .Values.orderService.image.pullPolicy }}
+          {{- if .Values.orderService.command }}
+          command:
+          {{ tpl .Values.orderService.command . | indent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.orderService.containerPorts.http }}
+          {{- if .Values.orderService.livenessProbe.enabled }}
+          livenessProbe: {{- omit .Values.orderService.livenessProbe "enabled" | toYaml | nindent 12 }}
+          {{- else if .Values.orderService.customLivenessProbe }}
+          livenessProbe: {{- toYaml .Values.orderService.customLivenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.orderService.readinessProbe.enabled }}
+          readinessProbe: {{- omit .Values.orderService.readinessProbe "enabled" | toYaml | nindent 12 }}
+          {{- else if .Values.orderService.customReadinessProbe }}
+          readinessProbe: {{- toYaml .Values.orderService.customReadinessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.orderService.resources }}
+          resources: {{- toYaml .Values.orderService.resources | nindent 12 }}
+          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: order-service-configmap
+          volumeMounts:
+          {{- if .Values.orderService.extraVolumeMounts }}
+          {{- toYaml .Values.orderService.extraVolumeMounts | nindent 12 }}
+      {{- end }}
+      {{- if .Values.orderService.extraInitContainers }}
+      initContainers:
+      {{ tpl .Values.orderService.extraInitContainers . | indent 8 }}
+      {{- end }}
+      volumes:
+      {{- if .Values.orderService.extraVolumes }}
+      {{- toYaml .Values.orderService.extraVolumes | nindent 8 }}
+  {{- end }}

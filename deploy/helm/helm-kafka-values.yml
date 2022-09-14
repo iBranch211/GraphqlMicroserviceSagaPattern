@@ -1,0 +1,21 @@
+replicaCount: 1
+minBrokerId: 0
+autoCreateTopicsEnable: true
+deleteTopicEnable: false
+
+image:
+  repository: bitnami/kafka
+  tag: 3.2
+
+
+persistence:
+  size: 50M
+
+zookeeper:
+  enabled: true
+  replicaCount: 1
+  auth:
+    client:
+      enabled: false
+  persistence:
+    size: 50M

@@ -1,0 +1,19 @@
+{
+  "path": {
+    "secret/auth-service*": {
+      "capabilities": [
+        "create", "read", "update", "delete", "list"
+      ]
+    },
+    "secret/application*": {
+      "capabilities": [
+        "create", "read", "update", "delete", "list"
+      ]
+    },
+    "database/creds/auth-admin-role": {
+      "capabilities": [
+        "read"
+      ]
+    }
+  }
+}

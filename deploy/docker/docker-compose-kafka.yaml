@@ -1,0 +1,59 @@
+version: '3.8'
+
+volumes:
+  zookeeper:
+  kafka:
+
+networks:
+  backend:
+    name: backend
+
+services:
+  zookeeper:
+    image: docker.io/bitnami/zookeeper:3.8
+    restart: unless-stopped
+    container_name: zookeeper
+    networks:
+      - backend
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    volumes:
+      - zookeeper:/bitnami
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: docker.io/bitnami/kafka:3.2
+    restart: unless-stopped
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    networks:
+      - backend
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,PLAINTEXT_HOST://:29092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_BROKER_ID=1
+      - KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+    volumes:
+      - kafka:/bitnami
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:3.30.0
+    restart: unless-stopped
+    container_name: kafdrop
+    depends_on:
+      - kafka
+    networks:
+      - backend
+    environment:
+      - KAFKA_BROKERCONNECT=kafka:9092
+      - JVM_OPTS=-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify
+    ports:
+      - "9000:9000"

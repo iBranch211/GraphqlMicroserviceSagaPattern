@@ -1,0 +1,31 @@
+# Ignore file for the Node.js apollo gateway app
+
+/node_modules
+/build
+/logs
+*.log
+
+######################
+# Mac OSX
+######################
+.DS_Store
+.svn
+
+######################
+# IntelliJ
+######################
+.idea/
+*.iml
+*.iws
+*.ipr
+*.ids
+*.orig
+classes/
+out/
+
+######################
+# Code coverage
+######################
+/coverage/
+/.nyc_output/
+.scannerwork

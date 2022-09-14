@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service
+  labels:
+    {{- include "payment-service.labels" . | nindent 4 }}
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      {{- include "payment-service.selectorLabels" . | nindent 6 }}
+      version: v1
+  {{- if .Values.global.updateStrategy }}
+  {{- if not .Values.paymentService.autoscaling.enabled }}
+  replicas: {{ .Values.paymentService.replicaCount }}
+  {{- end }}
+  strategy: {{- toYaml .Values.global.updateStrategy | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/payment-service/config-payment-service.yaml") . | sha256sum }}
+      labels:
+        {{- include "payment-service.selectorLabels" . | nindent 8 }}
+        version: v1
+    spec:
+      serviceAccountName: {{ template "app.serviceAccountName" . }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - payment-service
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+      {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets: {{- toYaml .Values.global.imagePullSecrets | nindent 4 }}
+      {{- end }}
+      containers:
+        {{- if .Values.paymentService.extraSideContainers }}
+        {{ tpl .Values.paymentService.extraSideContainers . | indent 8 }}
+        {{- end }}
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.paymentService.image.repository }}:{{ .Values.paymentService.image.tag }}"
+          imagePullPolicy: {{ .Values.paymentService.image.pullPolicy }}
+          {{- if .Values.paymentService.command }}
+          command:
+          {{ tpl .Values.paymentService.command . | indent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.paymentService.containerPorts.http }}
+          {{- if .Values.paymentService.livenessProbe.enabled }}
+          livenessProbe: {{- omit .Values.paymentService.livenessProbe "enabled" | toYaml | nindent 12 }}
+          {{- else if .Values.paymentService.customLivenessProbe }}
+          livenessProbe: {{- toYaml .Values.paymentService.customLivenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.paymentService.readinessProbe.enabled }}
+          readinessProbe: {{- omit .Values.paymentService.readinessProbe "enabled" | toYaml | nindent 12 }}
+          {{- else if .Values.paymentService.customReadinessProbe }}
+          readinessProbe: {{- toYaml .Values.paymentService.customReadinessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.paymentService.resources }}
+          resources: {{- toYaml .Values.paymentService.resources | nindent 12 }}
+          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: payment-service-configmap
+          volumeMounts:
+          {{- if .Values.paymentService.extraVolumeMounts }}
+          {{- toYaml .Values.paymentService.extraVolumeMounts | nindent 12 }}
+      {{- end }}
+      {{- if .Values.paymentService.extraInitContainers }}
+      initContainers:
+      {{ tpl .Values.paymentService.extraInitContainers . | indent 8 }}
+      {{- end }}
+      volumes:
+      {{- if .Values.paymentService.extraVolumes }}
+      {{- toYaml .Values.paymentService.extraVolumes | nindent 8 }}
+  {{- end }}

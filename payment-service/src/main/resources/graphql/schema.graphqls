@@ -1,0 +1,12 @@
+scalar OffsetDateTime
+
+type Query {
+    transaction(id: ID!): Transaction!
+    transactions: [Transaction!]!
+}
+
+type Transaction {
+    id: ID!
+    orderId: String!
+    price: Float!
+}

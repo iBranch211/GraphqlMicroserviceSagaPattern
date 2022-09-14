@@ -1,0 +1,24 @@
+scalar OffsetDateTime
+
+type Query {
+    order(id: ID!): OrderPurchase!
+    orders: [OrderPurchase!]!
+}
+
+type Mutation {
+    createOrder(input: AddOrderInput!): OrderPurchase!
+}
+
+type OrderPurchase {
+    id: ID!
+    userId: String!
+    productId: String!
+    price: Float!
+    status: String!
+}
+
+
+input AddOrderInput {
+    userId: String!
+    productId: String!
+}

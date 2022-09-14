@@ -1,0 +1,6 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+io.github.susimsek.mscommonweb.graphql.GraphqlDateTimeAutoConfiguration,\
+io.github.susimsek.mscommonweb.graphql.GraphqlExceptionResolverAutoConfiguration,\
+io.github.susimsek.mscommonweb.mongo.MongoDateTimeAutoConfiguration,\
+io.github.susimsek.mscommonweb.logging.LoggingAutoConfiguration,\
+io.github.susimsek.mscommonweb.validation.ValidationAutoConfiguration

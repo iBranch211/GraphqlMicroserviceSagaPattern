@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: order-service-configmap
+  labels:
+  {{- include "order-service.labels" . | nindent 4 }}
+data:
+  {{- if .Values.orderService.environment }}
+  {{- range $key, $val := .Values.orderService.environment }}
+  {{ $key }}: {{ $val | quote }}
+  {{- end }}
+  {{- end }}
+  SPRING_PROFILES_ACTIVE: {{ .Values.spring.profiles.active }}
+  SPRING_CLOUD_VAULT_URI: {{ .Values.vault.uri }}
+  SPRING_CLOUD_VAULT_AUTHENTICATION: {{ .Values.vault.authentication }}
+  SPRING_CLOUD_VAULT_KUBERNETES_ROLE: {{ .Values.vault.kubernetesRole }}

@@ -1,0 +1,19 @@
+{
+  "path": {
+    "secret/payment-service*": {
+      "capabilities": [
+        "create", "read", "update", "delete", "list"
+      ]
+    },
+    "secret/application*": {
+      "capabilities": [
+        "create", "read", "update", "delete", "list"
+      ]
+    },
+    "database/creds/payment-admin-role": {
+      "capabilities": [
+        "read"
+      ]
+    }
+  }
+}

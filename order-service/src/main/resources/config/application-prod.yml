@@ -1,0 +1,34 @@
+server:
+  shutdown: graceful
+  port: ${PORT:8080}
+
+spring:
+  data:
+    mongodb:
+      host: ${SPRING_DATA_MONGODB_HOST:localhost}
+      port: ${SPRING_DATA_MONGODB_PORT:27017}
+      authentication-database: ${SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE:admin}
+      database: ${SPRING_DATA_MONGODB_DATABASE:order}
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS:localhost}
+          defaultBrokerPort: ${SPRING_CLOUD_STREAM_KAFKA_BINDER_DEFAULT_BROKER_PORT:29092}
+          auto-create-topics: true
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+
+logging:
+  level:
+    ROOT: INFO
+    io.github.susimsek.product: INFO
+  use-json-format: false
+  logstash:
+    enabled: ${LOGSTASH_ENABLED:true}
+    host: ${LOGSTASH_HOST:localhost}
+    port: ${LOGSTASH_PORT:5000}
+    ring-buffer-size: ${LOGSTASH_RING_BUFFER_SIZE:512}

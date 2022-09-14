@@ -1,0 +1,9 @@
+package io.github.susimsek.order.repository
+
+import io.github.susimsek.order.model.Product
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository
+import org.springframework.data.querydsl.ReactiveQuerydslPredicateExecutor
+import org.springframework.stereotype.Repository
+
+@Repository
+interface ProductRepository : ReactiveMongoRepository<Product, String>, ReactiveQuerydslPredicateExecutor<Product>

@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  labels:
+  {{- include "order-service.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.orderService.service.type }}
+  {{- if and (eq .Values.orderService.service.type "LoadBalancer") .Values.orderService.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.orderService.service.loadBalancerIP }}
+  {{- end }}
+  {{- if and (eq .Values.orderService.service.type "ClusterIP") .Values.orderService.service.clusterIP }}
+  clusterIP: {{ .Values.orderService.service.clusterIP }}
+  {{- end }}
+  ports:
+    - port: {{ .Values.orderService.service.port }}
+      targetPort: http
+      {{- if and (or (eq .Values.orderService.service.type "NodePort") (eq .Values.orderService.service.type "LoadBalancer")) .Values.orderService.service.nodePort }}
+      nodePort: {{ .Values.orderService.service.nodePort }}
+      {{- else if eq .Values.orderService.service.type "ClusterIP" }}
+      nodePort: null
+      {{- end }}
+      name: http
+  selector:
+  {{- include "order-service.selectorLabels" . | nindent 4 }}

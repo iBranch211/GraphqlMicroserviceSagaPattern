@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: payment-service
+  profiles:
+    active: local
+  cloud:
+    stream:
+      function:
+        definition: orderPurchaseEventProcessor;paymentEventSubscriber
+      bindings:
+        orderPurchaseEventProcessor-in-0:
+          destination: orders
+        orderPurchaseEventProcessor-out-0:
+          destination: payments
+        paymentEventSubscriber-in-0:
+          destination: payments
+        paymentEventSubscriber-out-0:
+          destination: transactions
+      default-binder: kafka
+  main:
+    allow-bean-definition-overriding: true
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+server:
+  forward-headers-strategy: framework
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: '!local'
+    import: vault://
+  cloud:
+    vault:
+      authentication: APPROLE # TOKEN
+      app-role:
+        role-id: b6c35726-4ae4-7eed-8144-c23195a87e1d
+        secret-id: 5f592301-ff49-0023-0bec-320c06a3bd7c
+        role: pres-read
+        app-role-path: approle
+      kv:
+        enabled: true
+        backend: secret
+      uri: http://localhost:8200
+      mongodb:
+        enabled: true
+        role: payment-admin-role
+        backend: database
+        username-property: spring.data.mongodb.username
+        password-property: spring.data.mongodb.password
+    consul:
+      host: ${SPRING_CLOUD_CONSUL_HOST:localhost}
+      port: ${SPRING_CLOUD_CONSUL_PORT:8500}
+      discovery:
+        instance-id: ${spring.application.name}:${random.value}
+        prefer-ip-address: true
+        acl-token: ${SPRING_CLOUD_CONSUL_DISCOVERY_ACL_TOKEN:1dc477e6-422b-33aa-4cc7-140e4386d030}
+        tags: graphql

@@ -1,0 +1,9 @@
+subgraphs:
+  orders:
+    routing_url: http://order-service:8081/graphql
+    schema:
+      file: ../order-service/src/main/resources/graphql/schema.graphqls
+  payment:
+    routing_url: http://payment-service:8082/graphql
+    schema:
+      file: ../payment-service/src/main/resources/graphql/schema.graphqls

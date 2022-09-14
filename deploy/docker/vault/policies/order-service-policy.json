@@ -1,0 +1,19 @@
+{
+  "path": {
+    "secret/order-service*": {
+      "capabilities": [
+        "create", "read", "update", "delete", "list"
+      ]
+    },
+    "secret/application*": {
+      "capabilities": [
+        "create", "read", "update", "delete", "list"
+      ]
+    },
+    "database/creds/order-admin-role": {
+      "capabilities": [
+        "read"
+      ]
+    }
+  }
+}

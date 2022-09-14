@@ -1,0 +1,26 @@
+{
+  "name": "apollo-gateway",
+  "description": "Simple federated gateway",
+  "dependencies": {
+    "@apollo/gateway": "latest",
+    "apollo-server": "latest",
+    "consul": "^0.40.0",
+    "dotenv": "^16.0.1",
+    "graphql": "^16.5.0",
+    "ip": "^1.1.8",
+    "node-vault": "^0.9.22",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "latest",
+    "sonarqube-scanner": "^2.8.1"
+  },
+  "keywords": [],
+  "license": "MIT",
+  "main": "src/gateway.js",
+  "scripts": {
+    "start:dev": "NODE_ENV=development node src/gateway.js",
+    "start": "node src/gateway.js",
+    "sonar": "node sonarqube-scanner.js"
+  }
+}
