@@ -13,7 +13,7 @@
 	<version>1.0.0</version>
 	<name>Order Microservice</name>
 	<description>Spring Boot Order Microservice</description>
-	<url>https://github.com/susimsek/GraphqlMicroserviceTdd/</url>
+	<url>https://github.com/susimsek/GraphqlMicroserviceSagaPattern/</url>
 
 	<properties>
 		<docker.image.name>docker.io/suayb/order-service</docker.image.name>
@@ -148,7 +148,7 @@
 	<repositories>
 		<repository>
 			<id>github</id>
-			<url>https://maven.pkg.github.com/susimsek/GraphqlMicroserviceTdd</url>
+			<url>https://maven.pkg.github.com/susimsek/GraphqlMicroserviceSagaPattern</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
