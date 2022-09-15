@@ -16,11 +16,11 @@ single API call.
 
 # Data Flow
 
-The Order Service application takes in an Order as a request, which creates and sends an OrderPurchaseEvent to the Kafka topic orders which is processed by OrderPurchaseEventHandler in the payment service.  
-OrderPurchaseEventHandler processes the event and calculates if user has enough credit. If so, it sets the generated PaymentEvent status to APPROVED, otherwise DECLINED.  
-A PaymentEvent is emitted to the Kafka topic payments, which the PaymentEventHandler in the Payment Service application listens for.  
-If the PaymentEvent status is APPROVED, it saves the transaction in the TransactionRepository. A TransactionEvent is emitted to the transactions topic.  
-The TransactionEventConsumer reads this in the order service, if successful, the OrderRepository saves this as ORDER_COMPLETED, else ORDER_FAILED  
+* The Order Service application takes in an Order as a request, which creates and sends an OrderPurchaseEvent to the Kafka topic orders which is processed by OrderPurchaseEventHandler in the payment service.  
+* OrderPurchaseEventHandler processes the event and calculates if user has enough credit. If so, it sets the generated PaymentEvent status to APPROVED, otherwise DECLINED.  
+* A PaymentEvent is emitted to the Kafka topic payments, which the PaymentEventHandler in the Payment Service application listens for.  
+* If the PaymentEvent status is APPROVED, it saves the transaction in the TransactionRepository. A TransactionEvent is emitted to the transactions topic.  
+* The TransactionEventConsumer reads this in the order service, if successful, the OrderRepository saves this as ORDER_COMPLETED, else ORDER_FAILED  
 
 # Development
 
