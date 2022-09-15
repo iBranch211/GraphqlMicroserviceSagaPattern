@@ -1,15 +1,9 @@
-# Graphql  Microservice Application With Saga Pattern
+# Graphql  Microservice Application With Choreography-based Saga Pattern
 
-Graphql Microservice Application With Saga pattern
+Graphql Microservice Application With Choreography-based Saga Pattern
 
-Data Flow
-The Order Service application takes in an Order as a request, which creates and sends an OrderPurchaseEvent to the Kafka topic orders which is processed by OrderPurchaseEventHandler in the payment service.
-OrderPurchaseEventHandler processes the event and calculates if user has enough credit. If so, it sets the generated PaymentEvent status to APPROVED, otherwise DECLINED.
-A PaymentEvent is emitted to the Kafka topic payments, which the PaymentEventHandler in the Payment Service application listens for.
-If the PaymentEvent status is APPROVED, it saves the transaction in the TransactionRepository. A TransactionEvent is emitted to the transactions topic.
-The TransactionEventConsumer reads this in the order service, if successful, the OrderRepository saves this as ORDER_COMPLETED, else ORDER_FAILED
 
-<img src="https://github.com/susimsek/GraphqlMicroserviceTdd/blob/main/images/introduction.png" alt="Graphql Fullstack Microservice App" width="100%" height="100%"/> 
+<img src="https://github.com/susimsek/GraphqlMicroserviceSagaPattern/blob/main/images/introduction.png" alt="Graphql  Microservice Application With Choreography-based Saga Pattern" width="100%" height="100%"/> 
 
 # Graphql
 
@@ -20,41 +14,13 @@ It can even be deployed within an integrated development environment (IDE) known
 As an alternative to REST, GraphQL lets developers construct requests that pull data from multiple data sources in a
 single API call.
 
-# OAuth2 Authorization Server
-We are using oauth2 authorization server to secure the application.
+# Data Flow
 
-<img src="https://github.com/susimsek/GraphqlMicroserviceTdd/blob/main/images/auth-server.png" alt="Spring Boot Authorization Server" width="100%" height="100%"/>
-
-To log in to your app, you'll need to have Spring OAuth2 Authorization Server up and running.
-
-The OAuth2 Authorization Server can be accessed from this link via kubernetes.  
-http://auth.susimsek.github.io
-
-The OAuth2 Authorization Server can be accessed from this link via heroku.  
-https://graphql-fullstack-auth-service.herokuapp.com
-
-The default user credentials information is as follows. 
-You can log in to the authorization server using that credential information or login to the authorization server with gmail.
-
-
-```sh
-username: admin
-password: password
-```
-
-# Application
-
-The GraphQL Fullstack application can be accessed from this link.  
-http://gqlmsweb.susimsek.github.io
-
-## Dashboard
-<img src="https://github.com/susimsek/GraphqlMicroserviceTdd/blob/main/images/ui-dashboard.png" alt="Graphql Fullstack Microservice App Dashboard" width="100%" height="100%"/>   
-
-## Product Page
-<img src="https://github.com/susimsek/GraphqlMicroserviceTdd/blob/main/images/ui-product-page.png" alt="Graphql Fullstack Microservice App Product Page" width="100%" height="100%"/>  
-
-## Login Page
-<img src="https://github.com/susimsek/GraphqlMicroserviceTdd/blob/main/images/ui-login-page.png" alt="Graphql Fullstack Microservice App Login Page" width="100%" height="100%"/>
+The Order Service application takes in an Order as a request, which creates and sends an OrderPurchaseEvent to the Kafka topic orders which is processed by OrderPurchaseEventHandler in the payment service.  
+OrderPurchaseEventHandler processes the event and calculates if user has enough credit. If so, it sets the generated PaymentEvent status to APPROVED, otherwise DECLINED.  
+A PaymentEvent is emitted to the Kafka topic payments, which the PaymentEventHandler in the Payment Service application listens for.  
+If the PaymentEvent status is APPROVED, it saves the transaction in the TransactionRepository. A TransactionEvent is emitted to the transactions topic.  
+The TransactionEventConsumer reads this in the order service, if successful, the OrderRepository saves this as ORDER_COMPLETED, else ORDER_FAILED  
 
 # Development
 
@@ -96,24 +62,6 @@ You can run the apollo gateway(accessible on http://127.0.0.1:4000) by typing th
 npm run start:dev
 ```
 
-## Prerequisites for Frontend
-
-* Nodejs 14+
-
-### Run the app
-
-You can install the dependencies by typing the following command
-
-```sh
-npm install
-```
-
-You can run the react app(accessible on http://127.0.0.1:3000) by typing the following command
-
-```sh
-npm start
-```
-
 # Supergraph Composition
 
 ## Prerequisites
@@ -144,14 +92,6 @@ You can test code quality locally via sonarqube by typing the following command
 npm run sonar
 ```
 
-## Code Quality For Frontend
-
-You can test code quality locally via sonarqube by typing the following command
-
-```sh
-npm run sonar
-```
-
 # Detekt
 
 Detekt a static code analysis tool for the Kotlin programming language  
@@ -160,16 +100,6 @@ You can run detekt by typing the following command
 
 ```sh
 mvn antrun:run@detekt
-```
-
-# Caching
-
-Redis is an Open Source, in-memory data structure store that can be used as a performant caching solution Depending on your configuration, you can choose to use Redis as a single server node or as a distributed cache   
-
-Default cache expire time is 1 hour but you can change it via vault by changing the following environment variable
-
-```sh
-CACHE_EXPIRATION=3600s
 ```
 
 # Docker
@@ -182,14 +112,6 @@ The docker image of microservice can be built as follows:
 
 ```sh
 mvn -Pjib verify jib:dockerBuild
-```
-
-## Build Docker Image for Frontend
-
-The docker image of ui can be built as follows:
-
-```sh
-docker build -t web .
 ```
 
 ## Deployment with Docker Compose
@@ -219,9 +141,6 @@ You can uninstall app the following bash command
 
 The Fullstack GraphQL App be accessed with nginx from the link below.  
 http://127.0.0.1
-
-The OAuth2 Authorization Server be accessed from the link below.  
-http://127.0.0.1:9000
 
 
 ## Deployment Kubernetes with Helm
@@ -254,11 +173,8 @@ following bash command
  ./deploy.sh -u
 ```
 
-The Fullstack GraphQL App be accessed with ingress from the link below.(default nginx ingress)  
+The app be accessed with ingress from the link below.(default nginx ingress)  
 http://gqlmsweb.susimsek.github.io
-
-The OAuth2 Authorization Server be accessed with ingress from the link below. (default nginx ingress)  
-http://auth.susimsek.github.io
 
 # Used Technologies
 ## Backend Side
@@ -270,53 +186,26 @@ http://auth.susimsek.github.io
 * Helm
 * Sonarqube
 * Detekt
-* Heroku(only Authorization Server)
 * Circleci
 * Snyk
+* Kafka
 * Vault
 * Consul
 * Nginx
 * Mongodb
-* Redis(for Caching)
 * Elasticsearch
 * Kibana
 * Logstash
 * Apollo Gateway
 * Spring Boot
 * Spring Cloud
-* Spring Boot Web(only Authorization Server)
 * Spring Boot Web Flux
 * Spring Boot Graphql
 * Spring Boot Validation
-* Spring Boot Security
-* Spring Security OAuth2 Authorization Server
-* Spring Security OAuth2 Resource Server
-* Spring Security OAuth2 Client
-* Spring Boot Thymeleaf
+* Spring Cloud Stream
 * Spring Boot Actuator
 * Spring Boot Configuration Processor
+* Kotlinx Coroutines Reactor
 * Federation Graphql Java Support
 * Logstash Logback Encoder
 * Querydsl
-
-## Backend Side for TDD
-* Testcontainers
-* Spring Boot Test
-* Spring Security Test
-* Spring Graphql Test
-* Kotlin Test Junit
-* Mockito Kotlin
-* Reactor Test
-
-## Frontend Side
-* React
-* React Router
-* React Router Dom
-* Typescript
-* Apollo Client
-* Graphql
-* Graphql Codegen
-* Axios
-* Bootstrap
-* React Bootstrap
-* Crypto js
